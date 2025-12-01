@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+*{
+    font-family: "Rubik", sans-serif;
+}
+
+.card{
+    border: none;
+}
+
+.card-body{
+    padding: 40px 40px;
+}
+
+.title{
+    font-size: 25px;
+    font-weight: 400;
+    text-transform: uppercase;
+}
