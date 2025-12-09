@@ -44,7 +44,7 @@ if (isset($_SESSION['user_id'])) {
                                 </form>
 
                                 <div class="sso text-center">
-                                    <p>Can't remember your password? <u>Recover Not it.</u></p>
+                                    <p>Can't remember your password? <u>Recover it.</u></p>
 
                                     <p class="mt-4">Or Sign In Using</p>
                                     <a href="includes/google-login.php"><img src="assets/images/google.png" alt=""></a>

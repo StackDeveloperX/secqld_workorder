@@ -1,6 +1,12 @@
 <?php
 include("../includes/connection.php");
-$sql = "SELECT site_id, site_name FROM site_tbl";
+
+$serviceType = isset($_GET['service_type']) ? intval($_GET['service_type']) : 0;
+
+$sql = "SELECT site_id, site_name 
+        FROM site_tbl 
+        WHERE service_type = $serviceType AND site_status='Active'";
+
 $result = $conn->query($sql);
 
 $sites = [];
