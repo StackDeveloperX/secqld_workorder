@@ -178,7 +178,7 @@ $conn->close();
                                                     </div>
                                                     <div class="col-sm-12">
                                                         <div class="mb-3">
-                                                            <button type="submit" class="btn btn-green">Add Work Order</button>
+                                                            <button type="submit" id="add_work_order_btn" class="btn btn-green">Add Work Order</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -357,6 +357,8 @@ $conn->close();
                 $('#addwork').on('submit', function(e) {
                     e.preventDefault();
 
+                    $('#add_work_order_btn').prop('disabled', true).text('Adding Work Order...');
+
                     // Create FormData object to handle files + text
                     var formData = new FormData(this);
 
@@ -377,6 +379,8 @@ $conn->close();
                             $.get("generate_work_order.php", function(data) {
                                 $('#work_order_no').val(data);
                             });
+
+                            location.reload();
                         },
                         error: function(xhr) {
                             alert("An error occurred. Check console.");

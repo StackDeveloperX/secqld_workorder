@@ -207,7 +207,7 @@ $conn->close();
                                         LEFT JOIN users u ON w.assigned_to = u.user_id
                                         LEFT JOIN admin a ON w.logged_by = a.admin_id
                                         WHERE w.assigned_to = $user_id
-                                        ORDER BY w.work_order_id DESC"; // latest first
+                                        ORDER BY w.work_order_date DESC, w.work_order_number DESC"; // latest first
                                     $result = $conn->query($sql);
                                     ?>
                                     <tbody>
@@ -328,7 +328,8 @@ $conn->close();
                 responsive: true,
                 scrollX: true,
                 pageLength: 5,
-                lengthMenu: [5, 10, 25, 50, 100]
+                lengthMenu: [5, 10, 25, 50, 100],
+                order: [[1, "desc"]]   // Sort Date column (0) in descending order
             });
         </script>
         <script>
