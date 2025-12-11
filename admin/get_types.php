@@ -1,6 +1,6 @@
 <?php
 include("../includes/connection.php");
-$sql = "SELECT service_id, service_name FROM service_type_tbl WHERE service_type = 'Normal'";
+$sql = "SELECT service_id, service_name FROM service_type_tbl WHERE service_type = 'Normal' AND service_status = 'Active'";
 $result = $conn->query($sql);
 
 $sites = [];
