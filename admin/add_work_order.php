@@ -57,6 +57,7 @@ $conn->close();
                             <a href="add_work_order.php"><p class="active-menu"><span><i class="fa-solid fa-clipboard"></i>  Add Work Orders </span></p></a>
                             <a href="all_work_orders.php"><p class="menu"><span><i class="fa-solid fa-clipboard"></i>  All Work Orders </span></p></a>
                             <a href="wo_status.php"><p class="menu"><span><i class="fa-solid fa-circle-user"></i> Work Order Status</span></p></a>
+                            <a href="add_service_type.php"><p class="menu"><span><i class="fa-solid fa-gears"></i> Add Service Type</span></p></a>
                             <a href="logout.php"><p class="menu"><span><i class="fa-solid fa-right-from-bracket"></i> Log Out</span></p></a>
                         </div>
 
