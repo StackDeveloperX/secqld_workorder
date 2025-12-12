@@ -2,7 +2,7 @@
 session_start();
 
 if (isset($_SESSION['admin_id'])) {
-    header("Location: dashboard.php");
+    header("Location: add_work_order.php");
     exit;
 }
 ?>
@@ -108,7 +108,7 @@ if (isset($_SESSION['admin_id'])) {
                             if (response === 'success') {
                                 showToast('Login successful!', 'success');
                                 setTimeout(() => {
-                                    window.location.href = 'dashboard.php'; // Redirect
+                                    window.location.href = 'add_work_order.php'; // Redirect
                                 }, 1500);
                             } else if (response === 'invalid') {
                                 showToast('Invalid email or password.');
