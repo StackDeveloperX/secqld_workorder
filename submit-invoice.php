@@ -50,8 +50,8 @@ if (!empty($_FILES['upload_invoice_pdf']['name'])) {
 // ---------------------------
 // Insert into invoice table
 // ---------------------------
-$sql = "INSERT INTO invoice_tbl (work_order_number, invoice_date, invoice_number, sub_total, file_path)
-        VALUES (?, ?, ?, ?, ?)";
+$sql = "INSERT INTO invoice_tbl (work_order_number, invoice_date, invoice_number, sub_total, file_path, payment_status)
+        VALUES (?, ?, ?, ?, ?, 'Not Paid')";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("sssss", $work_order_number_new, $invoice_date, $invoice_number, $sub_total, $safe_name);

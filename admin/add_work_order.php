@@ -99,6 +99,7 @@ $conn->close();
                                             <select class="form-select" id="work_order_type" name="work_order_type">
                                                 <option value="">-- Select Type --</option>
                                                 <option value="Normal">Normal</option>
+                                                <option value="Recurring">Recurring</option>
                                             </select> 
                                         </div>
                                         <div id="normal" style="display:none;">
