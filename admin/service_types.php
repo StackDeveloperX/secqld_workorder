@@ -98,10 +98,10 @@ $conn->close();
                                     <div class="card-body">
                                         <h2 class="title greentitle text-center mb-3">Service Types</h2>
                                         <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addServiceTypeModal">
-                                            Add New Service Type
+                                            <i class="fa-solid fa-plus"></i> Add New Service Type
                                         </button>
-                                        <button class="btn btn-primary mb-3" id="bulkActivate">Activate Selected</button>
-                                        <button class="btn btn-warning mb-3" id="bulkDeactivate">Deactivate Selected</button>
+                                        <button class="btn btn-primary mb-3" id="bulkActivate"><i class="fa-solid fa-check"></i> Activate Selected</button>
+                                        <button class="btn btn-warning mb-3" id="bulkDeactivate"><i class="fa-solid fa-xmark"></i> Deactivate Selected</button>
                                         <table id="servicesTable" class="table table-striped table-sm" style="width:100%">
                                             <thead>
                                                 <tr>

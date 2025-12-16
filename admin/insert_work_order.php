@@ -288,7 +288,7 @@ if ($site_result && $site_result->num_rows > 0) {
 
                         <!-- CTA BUTTON -->
                         <div style='text-align:center; margin-top:40px;'>
-                            <a href='https://yourdomain.com/workorder/view.php?id=$work_order_no'
+                            <a href='https://webpst.com.au/secqldsoftware'
                                 style='background:#0B7937; color:#ffffff; padding:12px 25px; text-decoration:none; 
                                     border-radius:6px; font-size:16px; font-weight:600; display:inline-block;'>
                                 View Work Order
