@@ -57,6 +57,7 @@ $conn->close();
                         <div class="menu_list">
                             <a href="dashboard.php"><p class="menu"><span><i class="fa-solid fa-house"></i> Home</span></p></a>
                             <a href="running-sheet.php"><p class="active-menu"><span><i class="fa-solid fa-clipboard"></i>  Work Request </span></p></a>
+                            <a href="recurring.php"><p class="menu"><span><i class="fa-solid fa-clipboard"></i>  Recurring Contracts </span></p></a>
                             <!-- <p class="menu"><span><i class="fa-solid fa-circle-user"></i> Profile</span></p>
                             <p class="menu"><span><i class="fa-solid fa-phone-volume"></i> Contact Us</span></p>
                             <p class="menu"><span><i class="fa-solid fa-gear"></i> Settings</span></p> -->

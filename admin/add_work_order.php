@@ -55,7 +55,9 @@ $conn->close();
                         <div class="menu_list">
                             <a href="add_work_order.php"><p class="active-menu"><span><i class="fa-solid fa-clipboard"></i>  Add Work Orders </span></p></a>
                             <a href="all_work_orders.php"><p class="menu"><span><i class="fa-solid fa-clipboard"></i>  All Work Orders </span></p></a>
+                            <a href="recurring_work_orders.php"><p class="menu"><span><i class="fa-solid fa-clipboard"></i>  Recurring Work Orders </span></p></a>
                             <a href="wo_status.php"><p class="menu"><span><i class="fa-solid fa-circle-user"></i> Work Order Status</span></p></a>
+                            <a href="recurring_wo_status.php"><p class="menu"><span><i class="fa-solid fa-circle-user"></i> Recurring Status</span></p></a>
                             <a href="service_types.php"><p class="menu"><span><i class="fa-solid fa-gears"></i> Service Types</span></p></a>
                             <a href="sites.php"><p class="menu"><span><i class="fa-regular fa-building"></i> Sites</span></p></a>
                             <a href="logout.php"><p class="menu"><span><i class="fa-solid fa-right-from-bracket"></i> Log Out</span></p></a>
@@ -187,11 +189,11 @@ $conn->close();
                                             </form>
                                         </div>
                                         <div id="recurring" style="display:none;">
-                                            <form id="addrecurringwork"  method="POST" enctype="multipart/form-data">
-                                                <div class="row">
+                                            <form id="contractForm"  method="POST" enctype="multipart/form-data">
+                                                <!-- <div class="row">
                                                     <div class="col-sm-12">
                                                         <div class="mb-3">
-                                                        <input type="text" class="form-control" id="admin_name" name="admin_name" value="<?php echo htmlspecialchars($admin_id); ?>" hidden> 
+                                                            <input type="text" class="form-control" id="admin_name" name="admin_name" value="<?php echo htmlspecialchars($admin_id); ?>" hidden> 
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-4">
@@ -271,6 +273,87 @@ $conn->close();
                                                             <button type="submit" class="btn btn-green">Create Recurring Work Order</button>
                                                         </div>
                                                     </div>
+                                                </div> -->
+
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="mb-3">
+                                                            <input type="text" class="form-control" id="admin_name" name="admin_name" value="<?php echo htmlspecialchars($admin_id); ?>" hidden> 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <div class="mb-3">
+                                                            <label for="sitename_recurring" class="form-label">Site Name</label>
+                                                            <select class="form-select" id="sitename_recurring" name="sitename_recurring">
+                                                                <option value="">Loading...</option>
+                                                            </select> 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <div class="mb-3">
+                                                            <label for="service_type_recurring" class="form-label">Service Types</label>
+                                                            <select class="form-select" id="service_type_recurring" name="service_type_recurring">
+                                                                <option value="">Loading...</option>
+                                                            </select> 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <div class="mb-3">
+                                                            <label for="start_date" class="form-label">Start Date</label>
+                                                            <input type="date" class="form-control" id="start_date" name="start_date">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <div class="mb-3">
+                                                            <label for="end_date" class="form-label">End Date</label>
+                                                            <input type="date" class="form-control" id="end_date" name="end_date">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <div class="mb-3">
+                                                            <label for="frequency" class="form-label">Frequency</label>
+                                                            <select class="form-select" id="frequency" name="frequency">
+                                                                <option value="">-- Select Frequency --</option>
+                                                                <option value="Weekly">Weekly</option>
+                                                                <option value="Fortnightly">Fortnightly</option>
+                                                                <option value="Monthly">Monthly</option>
+                                                                <option value="Quarterly">Quarterly</option>
+                                                            </select> 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <div class="mb-3">
+                                                            <label for="work_order_amount" class="form-label">Work Order Amount</label>
+                                                            <input type="text" class="form-control" id="work_order_amount" name="work_order_amount" > 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="mb-3">
+                                                            <label for="user_select_recurring" class="form-label">Assign Work To</label>
+                                                            <select class="form-select" id="user_select_recurring" name="user_select_recurring">
+                                                                <option value="">Loading...</option>
+                                                            </select> 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="mb-3">
+                                                            <label for="priority_recurring" class="form-label">Priority</label>
+                                                            <select class="form-select" id="priority_recurring" name="priority_recurring">
+                                                                <option value="">Loading...</option>
+                                                            </select> 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="mb-1">
+                                                            <label for="job_description_recurring" class="form-label">Job Description</label>
+                                                            <textarea class="form-control" id="job_description_recurring" name="job_description_recurring"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="mb-3">
+                                                            <button type="submit" class="btn btn-green">Create Recurring Work Order</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </form>
                                         </div>
@@ -294,6 +377,7 @@ $conn->close();
                 </div>
             </div>
         </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="js/generate_work_order.js"></script>
@@ -325,7 +409,6 @@ $conn->close();
                     }
                 });
             });
-
         </script>
         <script>
             function updateClock() {
@@ -352,7 +435,6 @@ $conn->close();
 
             // Initial call
             updateClock();
-
         </script>
         <script>
             $(document).ready(function() {
@@ -391,7 +473,6 @@ $conn->close();
                     });
                 });
             });
-
         </script>
 
         <script>
@@ -443,7 +524,7 @@ $conn->close();
                     if(annual > 0){
                         let formatted = new Intl.NumberFormat('en-US', { 
                             style: 'currency', 
-                            currency: 'USD' 
+                            currency: 'AU' 
                         }).format(annual);
 
                         $('#annual_amount').val(formatted);
@@ -456,7 +537,79 @@ $conn->close();
                 $('#frequency, #work_order_amount').on('input change', calculateAnnualAmount);
 
             });
-            </script>
-            
+        </script>
+
+        <script>
+            $(document).ready(function () {
+
+                $.ajax({
+                    url: 'get_new_sites.php',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        let options = '<option value="">Select Site</option>';
+
+                        if (response.length > 0) {
+                            $.each(response, function (i, site) {
+                                options += `<option value="${site.site_id}">
+                                                ${site.site_name}
+                                            </option>`;
+                            });
+                        } else {
+                            options = '<option value="">No sites found</option>';
+                        }
+
+                        $('#sitename_recurring').html(options);
+                    },
+                    error: function () {
+                        $('#sitename_recurring').html('<option value="">Error loading sites</option>');
+                    }
+                });
+
+            });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            $("#contractForm").submit(function(e){
+                e.preventDefault();
+
+                $.ajax({
+                    url: "createRecurringContract.php",
+                    type: "POST",
+                    data: $(this).serialize(),
+                    dataType: "json",
+                    success: function(res) {
+
+                        if (res.status === "success") {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Success",
+                                text: res.message,
+                                confirmButtonColor: "#3085d6"
+                            }).then(() => {
+                                $("#contractForm")[0].reset();
+                            });
+
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: res.message,
+                                confirmButtonColor: "#d33"
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Server Error",
+                            text: "Something went wrong. Please try again.",
+                            confirmButtonColor: "#d33"
+                        });
+                    }
+                });
+            });
+        </script>
+
     </body>
 </html>
