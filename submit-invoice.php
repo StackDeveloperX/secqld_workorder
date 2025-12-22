@@ -159,7 +159,7 @@ try {
 
     $mail->send();
 
-    echo "Invoice submitted successfully!";
+    echo "success";
 
 } catch (Exception $e) {
     echo "Email Error: {$mail->ErrorInfo}";

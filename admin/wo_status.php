@@ -58,7 +58,9 @@ $conn->close();
                         <div class="menu_list">
                             <a href="add_work_order.php"><p class="menu"><span><i class="fa-solid fa-clipboard"></i>  Add Work Orders </span></p></a>
                             <a href="all_work_orders.php"><p class="menu"><span><i class="fa-solid fa-clipboard"></i>  All Work Orders </span></p></a>
+                            <a href="recurring_work_orders.php"><p class="menu"><span><i class="fa-solid fa-clipboard"></i>  Recurring Work Orders </span></p></a>
                             <a href="wo_status.php"><p class="active-menu"><span><i class="fa-solid fa-circle-user"></i> Work Order Status</span></p></a>
+                            <a href="recurring_wo_status.php"><p class="menu"><span><i class="fa-solid fa-circle-user"></i> Recurring Status</span></p></a>
                             <a href="service_types.php"><p class="menu"><span><i class="fa-solid fa-gears"></i> Service Types</span></p></a>
                             <a href="sites.php"><p class="menu"><span><i class="fa-regular fa-building"></i> Sites</span></p></a>
                             <a href="logout.php"><p class="menu"><span><i class="fa-solid fa-right-from-bracket"></i> Log Out</span></p></a>
@@ -97,7 +99,7 @@ $conn->close();
                                 <div class="card shadow outer-card">
                                     <div class="card-body">
                                         <h2 class="title greentitle text-center mb-3">Work Order Status</h2>
-                                        <table id="example" class="table table-striped" style="width:100%">
+                                        <table id="example" class="table table-striped table-sm" style="width:100%">
                                             <thead>
                                                 <tr>
                                                     <th>Date</th>
@@ -155,8 +157,8 @@ $conn->close();
                                                             <td>$<?php echo htmlspecialchars($row['value']); ?></td>
                                                             <td>$<?php echo htmlspecialchars($row['actual_value']); ?></td>
                                                             <td>
-                                                                <button class="btn btn-success approve" data-id="<?php echo htmlspecialchars($row['work_order_number']); ?>">Approve</button>
-                                                                <button class="btn btn-danger decline" data-id="<?php echo htmlspecialchars($row['work_order_number']); ?>">Decline</button>
+                                                                <button class="btn btn-success btn-sm approve" data-id="<?php echo htmlspecialchars($row['work_order_number']); ?>">Approve</button>
+                                                                <button class="btn btn-danger btn-sm decline" data-id="<?php echo htmlspecialchars($row['work_order_number']); ?>">Decline</button>
                                                             </td>
                                                         </tr>
                                                     <?php endwhile; ?>
@@ -213,12 +215,7 @@ $conn->close();
         </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="js/generate_work_order.js"></script>
-        <script src="js/select_sites.js"></script>
-        <script src="js/select_type.js"></script>
-        <script src="js/select_priority.js"></script>
-        <script src="js/select_user.js"></script>    
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
         <script>
             function updateClock() {
                 const now = new Date();
@@ -246,41 +243,7 @@ $conn->close();
             updateClock();
 
         </script>
-        <script>
-            $(document).ready(function() {
-                $('#addwork').on('submit', function(e) {
-                    e.preventDefault();
-
-                    // Create FormData object to handle files + text
-                    var formData = new FormData(this);
-
-                    $.ajax({
-                        url: 'insert_work_order.php',
-                        type: 'POST',
-                        data: formData,
-                        contentType: false, // Important: prevent jQuery from messing with the content type
-                        processData: false, // Important: don't let jQuery convert it to a query string
-                        success: function(response) {
-                            $('#toastBody').text(response);
-                            var toast = new bootstrap.Toast(document.getElementById('toastMsg'));
-                            toast.show();
-
-                            $('#addwork')[0].reset();
-
-                            // Regenerate new work order ID
-                            $.get("generate_work_order.php", function(data) {
-                                $('#work_order_no').val(data);
-                            });
-                        },
-                        error: function(xhr) {
-                            alert("An error occurred. Check console.");
-                            console.log(xhr.responseText);
-                        }
-                    });
-                });
-            });
-
-        </script>
+        
 
         <!-- DataTables JS -->
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -295,44 +258,95 @@ $conn->close();
             });
         </script>
 
+        <!-- SweetAlert CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             let rejectId = null;
+            let rejectBtn = null;
 
-            $(document).on('click', '.approve', function() {
-                let id = $(this).data('id');
+            // APPROVE
+            $(document).on('click', '.approve', function () {
+                let $btn = $(this);
+                let id = $btn.data('id');
 
-                $.post("update_status.php", { id: id, status: "Approved" }, function(response) {
-                    if (response.trim() === "success") {
-                        alert("Status updated to Approved");
-                        location.reload();
-                    } else {
-                        alert("Error: " + response);
-                    }
-                });
+                // Disable + spinner
+                $btn.prop('disabled', true)
+                    .html('<span class="spinner-border spinner-border-sm"></span> Approving');
+
+                $.post("update_status.php", { id: id, status: "Approved" })
+                    .done(function (response) {
+                        if (response.trim() === "success") {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Approved',
+                                text: 'Work order approved successfully',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response, 'error');
+                            resetButton($btn, 'Approve');
+                        }
+                    })
+                    .fail(function () {
+                        Swal.fire('Error', 'Server error occurred', 'error');
+                        resetButton($btn, 'Approve');
+                    });
             });
 
-            $(document).on('click', '.decline', function() {
-                rejectId = $(this).data('id');  // store ID
-                $('#rejectModal').modal('show'); // open modal
+            // DECLINE (open modal)
+            $(document).on('click', '.decline', function () {
+                rejectId = $(this).data('id');
+                rejectBtn = $(this);
+
+                $('#rejectReason').val('');
+                $('#rejectModal').modal('show');
             });
 
-            $('#confirmReject').click(function() {
-                let reason = $('#rejectReason').val();
-                if (reason.trim() === "") {
-                    alert("Please enter a reason for rejection.");
+            // CONFIRM REJECT
+            $('#confirmReject').on('click', function () {
+                let reason = $('#rejectReason').val().trim();
+
+                if (reason === "") {
+                    Swal.fire('Required', 'Please enter a rejection reason', 'warning');
                     return;
                 }
 
-                $.post("update_status.php", { id: rejectId, status: "Rejected", reason: reason }, function(response) {
+                // Disable decline button + spinner
+                rejectBtn.prop('disabled', true)
+                    .html('<span class="spinner-border spinner-border-sm"></span> Rejecting');
+
+                $.post("update_status.php", {
+                    id: rejectId,
+                    status: "Rejected",
+                    reason: reason
+                })
+                .done(function (response) {
                     if (response.trim() === "success") {
                         $('#rejectModal').modal('hide');
-                        alert("Status updated to Rejected with reason");
-                        location.reload();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Rejected',
+                            text: 'Work order rejected successfully',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => location.reload());
                     } else {
-                        alert("Error: " + response);
+                        Swal.fire('Error', response, 'error');
+                        resetButton(rejectBtn, 'Decline');
                     }
+                })
+                .fail(function () {
+                    Swal.fire('Error', 'Server error occurred', 'error');
+                    resetButton(rejectBtn, 'Decline');
                 });
             });
+
+            // RESET BUTTON HELPER
+            function resetButton($btn, text) {
+                $btn.prop('disabled', false).text(text);
+            }
         </script>
     </body>
 </html>

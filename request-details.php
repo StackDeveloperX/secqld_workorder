@@ -58,6 +58,7 @@ if ($result->num_rows === 1) {
                         <div class="menu_list">
                             <a href="dashboard.php"><p class="menu"><span><i class="fa-solid fa-house"></i> Home</span></p></a>
                             <a href="running-sheet.php"><p class="active-menu"><span><i class="fa-solid fa-clipboard"></i>  Work Request </span></p></a>
+                            <a href="recurring.php"><p class="menu"><span><i class="fa-solid fa-clipboard"></i>  Recurring Contracts </span></p></a>
                             <!-- <p class="menu"><span><i class="fa-solid fa-circle-user"></i> Profile</span></p>
                             <p class="menu"><span><i class="fa-solid fa-phone-volume"></i> Contact Us</span></p>
                             <p class="menu"><span><i class="fa-solid fa-gear"></i> Settings</span></p> -->
@@ -258,7 +259,7 @@ if ($result->num_rows === 1) {
                                                                         </td>
                                                                         <td><input type="date" name="actual_completion" id="actual_completion" class="form-control"></td>
                                                                         <td><input type="text" name="invoice_amouunt" id="invoice_amouunt" class="form-control"></td>
-                                                                        <td><button class="btn btn-success" type="submit">Update</button></td>
+                                                                        <td><button class="btn btn-success" type="submit" id="updateBillingBtn">Update</button></td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
@@ -470,7 +471,7 @@ if ($result->num_rows === 1) {
                             </div>
                             <div class="col-sm-12">
                                 <div class="mb-3">
-                                    <button class="btn btn-success" type="submit">Submit Invoice</button>
+                                    <button class="btn btn-success" type="submit" id="submitInvoiceBtn">Submit Invoice</button>
                                 </div>
                             </div>
                         </div>
@@ -628,6 +629,7 @@ if ($result->num_rows === 1) {
         ["not_for_invoices", "hidden_request", "any_document"].forEach(loadFiles);
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function(){
 
@@ -710,10 +712,14 @@ if ($result->num_rows === 1) {
                 });
             });
         });
-
+        
         $(document).ready(function(){
             $("#billingForm").on("submit", function(e){
                 e.preventDefault(); // stop normal form submission
+
+                let $btn = $("#updateBillingBtn");
+                // Disable button & change text
+                $btn.prop("disabled", true).text("Updating...");
 
                 $.ajax({
                     url: "update_billing.php",
@@ -735,25 +741,51 @@ if ($result->num_rows === 1) {
         $(document).on("submit", "#upload_invoice", function (e) {
             e.preventDefault();
 
-            var formData = new FormData(this);
+            let form = this;
+            let formData = new FormData(form);
+            let $btn = $("#submitInvoiceBtn");
+
+            // Disable button + show spinner
+            $btn.prop("disabled", true).html(
+                '<span class="spinner-border spinner-border-sm"></span> Submitting...'
+            );
 
             $.ajax({
-                url: "submit-invoice.php",   // PHP file to handle request
+                url: "submit-invoice.php",
                 type: "POST",
                 data: formData,
                 contentType: false,
                 processData: false,
-                beforeSend: function () {
-                    // Optional: disable button / show loader
-                },
+
                 success: function (response) {
-                    alert(response);
-                    $("#upload_invoice")[0].reset();
+                    if (response.trim() === "success") {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Invoice Submitted",
+                            text: "Invoice uploaded successfully",
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+
+                        form.reset();
+                        location.reload();
+                    } else {
+                        Swal.fire("Error", response, "error");
+                    }
+
+                    // Restore button
+                    resetSubmitButton();
                 },
+
                 error: function () {
-                    alert("Something went wrong.");
+                    Swal.fire("Error", "Something went wrong. Please try again.", "error");
+                    resetSubmitButton();
                 }
             });
+
+            function resetSubmitButton() {
+                $btn.prop("disabled", false).text("Submit Invoice");
+            }
         });
     </script>
 

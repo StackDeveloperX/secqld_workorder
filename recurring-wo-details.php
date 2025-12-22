@@ -57,7 +57,8 @@ if ($result->num_rows === 1) {
                         </div>
                         <div class="menu_list">
                             <a href="dashboard.php"><p class="menu"><span><i class="fa-solid fa-house"></i> Home</span></p></a>
-                            <a href="running-sheet.php"><p class="active-menu"><span><i class="fa-solid fa-clipboard"></i>  Work Request </span></p></a>
+                            <a href="running-sheet.php"><p class="menu"><span><i class="fa-solid fa-clipboard"></i>  Work Request </span></p></a>
+                            <a href="recurring.php"><p class="active-menu"><span><i class="fa-solid fa-clipboard"></i>  Recurring Contracts </span></p></a>
                             <!-- <p class="menu"><span><i class="fa-solid fa-circle-user"></i> Profile</span></p>
                             <p class="menu"><span><i class="fa-solid fa-phone-volume"></i> Contact Us</span></p>
                             <p class="menu"><span><i class="fa-solid fa-gear"></i> Settings</span></p> -->
@@ -253,7 +254,7 @@ if ($result->num_rows === 1) {
                                                                     <tr>
                                                                         <td><input type="text" name="invoice_number" id="invoice_number" class="form-control"></td>
                                                                         <td><input type="text" name="invoice_amouunt" id="invoice_amouunt" class="form-control"></td>
-                                                                        <td><button class="btn btn-success" type="submit">Update</button></td>
+                                                                        <td><button class="btn btn-success" type="submit" id="updateBillingBtn">Update</button></td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
@@ -703,6 +704,10 @@ if ($result->num_rows === 1) {
         $(document).ready(function(){
             $("#billingForm").on("submit", function(e){
                 e.preventDefault(); // stop normal form submission
+
+                let $btn = $("#updateBillingBtn");
+                // Disable button & change text
+                $btn.prop("disabled", true).text("Updating...");
 
                 $.ajax({
                     url: "update_billing_recurring.php",

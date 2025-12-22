@@ -58,6 +58,7 @@ $conn->close();
                         <div class="menu_list">
                             <a href="add_work_order.php"><p class="menu"><span><i class="fa-solid fa-clipboard"></i>  Add Work Orders </span></p></a>
                             <a href="all_work_orders.php"><p class="menu"><span><i class="fa-solid fa-clipboard"></i>  All Work Orders </span></p></a>
+                            <a href="recurring_work_orders.php"><p class="menu"><span><i class="fa-solid fa-clipboard"></i>  Recurring Work Orders </span></p></a>
                             <a href="wo_status.php"><p class="menu"><span><i class="fa-solid fa-circle-user"></i> Work Order Status</span></p></a>
                             <a href="recurring_wo_status.php"><p class="active-menu"><span><i class="fa-solid fa-circle-user"></i> Recurring Status</span></p></a>
                             <a href="service_types.php"><p class="menu"><span><i class="fa-solid fa-gears"></i> Service Types</span></p></a>
@@ -251,44 +252,99 @@ $conn->close();
             });
         </script>
 
+        <!-- SweetAlert CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             let rejectId = null;
+            let rejectBtn = null;
 
-            $(document).on('click', '.approve', function() {
-                let id = $(this).data('id');
+            // APPROVE
+            $(document).on('click', '.approve', function () {
+                let $btn = $(this);
+                let id = $btn.data('id');
 
-                $.post("update_recurring_status.php", { id: id, status: "Approved" }, function(response) {
+                // Disable + spinner
+                $btn.prop('disabled', true)
+                    .html('<span class="spinner-border spinner-border-sm"></span> Approving');
+
+                $.post("update_recurring_status.php", {
+                    id: id,
+                    status: "Approved"
+                })
+                .done(function (response) {
                     if (response.trim() === "success") {
-                        alert("Status updated to Approved");
-                        location.reload();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Approved',
+                            text: 'Recurring work order approved',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => location.reload());
                     } else {
-                        alert("Error: " + response);
+                        Swal.fire('Error', response, 'error');
+                        resetButton($btn, 'Approve');
                     }
+                })
+                .fail(function () {
+                    Swal.fire('Error', 'Server error occurred', 'error');
+                    resetButton($btn, 'Approve');
                 });
             });
 
-            $(document).on('click', '.decline', function() {
-                rejectId = $(this).data('id');  // store ID
-                $('#rejectModal').modal('show'); // open modal
+            // DECLINE (open modal)
+            $(document).on('click', '.decline', function () {
+                rejectId = $(this).data('id');
+                rejectBtn = $(this);
+
+                $('#rejectReason').val('');
+                $('#rejectModal').modal('show');
             });
 
-            $('#confirmReject').click(function() {
-                let reason = $('#rejectReason').val();
-                if (reason.trim() === "") {
-                    alert("Please enter a reason for rejection.");
+            // CONFIRM REJECT
+            $('#confirmReject').on('click', function () {
+                let reason = $('#rejectReason').val().trim();
+
+                if (reason === "") {
+                    Swal.fire('Required', 'Please enter a rejection reason', 'warning');
                     return;
                 }
 
-                $.post("update_recurring_status.php", { id: rejectId, status: "Rejected", reason: reason }, function(response) {
+                // Disable decline button + spinner
+                rejectBtn.prop('disabled', true)
+                    .html('<span class="spinner-border spinner-border-sm"></span> Rejecting');
+
+                $.post("update_recurring_status.php", {
+                    id: rejectId,
+                    status: "Rejected",
+                    reason: reason
+                })
+                .done(function (response) {
                     if (response.trim() === "success") {
                         $('#rejectModal').modal('hide');
-                        alert("Status updated to Rejected with reason");
-                        location.reload();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Rejected',
+                            text: 'Recurring work order rejected',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => location.reload());
                     } else {
-                        alert("Error: " + response);
+                        Swal.fire('Error', response, 'error');
+                        resetButton(rejectBtn, 'Decline');
                     }
+                })
+                .fail(function () {
+                    Swal.fire('Error', 'Server error occurred', 'error');
+                    resetButton(rejectBtn, 'Decline');
                 });
             });
+
+            // BUTTON RESET HELPER
+            function resetButton($btn, text) {
+                $btn.prop('disabled', false).text(text);
+            }
+
         </script>
     </body>
 </html>
