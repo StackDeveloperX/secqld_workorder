@@ -129,15 +129,16 @@ $conn->close();
                                                         wo.value,
                                                         wo.status
                                                     FROM recurring_work_orders wo
-                                                    JOIN site_tbl s 
-                                                        ON s.id = wo.site_id
-                                                    JOIN service_type_tbl st 
-                                                        ON st.service_id = wo.service_type_id
-                                                    JOIN admin a 
-                                                        ON a.admin_id = wo.logged_by
+                                                    JOIN site_tbl s ON s.id = wo.site_id
+                                                    JOIN service_type_tbl st ON st.service_id = wo.service_type_id
+                                                    JOIN admin a ON a.admin_id = wo.logged_by
                                                     WHERE wo.contract_id = $contract_id
-                                                    ORDER BY wo.work_order_date DESC
-                                                    "; // latest first
+                                                    AND wo.work_order_date >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
+                                                    AND wo.work_order_date <  DATE_ADD(
+                                                            DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY),
+                                                            INTERVAL 7 DAY
+                                                        )
+                                                    ORDER BY wo.work_order_date DESC"; // latest first
                                             $result = $conn->query($sql);
                                             ?>
                                             <tbody>
