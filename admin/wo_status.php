@@ -66,14 +66,14 @@ $conn->close();
                             <a href="logout.php"><p class="menu"><span><i class="fa-solid fa-right-from-bracket"></i> Log Out</span></p></a>
                         </div>
 
-                        <div class="bottom-section">
+                        <!-- <div class="bottom-section">
                             <div class="user-info text-center">
                                 <img src="../assets/images/user.png" alt="User" />
                                 <p class="name"><?php echo htmlspecialchars($name); ?></p>
                                 <p class="role"><?php echo htmlspecialchars($role); ?></p>
                             </div>
                             
-                        </div>
+                        </div> -->
                     </div>
                     <div class="col-sm-10 main-screen">
                         <div class="row">
@@ -156,10 +156,19 @@ $conn->close();
                                                             <?php endif; ?>
                                                             <td>$<?php echo htmlspecialchars($row['value']); ?></td>
                                                             <td>$<?php echo htmlspecialchars($row['actual_value']); ?></td>
+                                                            <?php
+                                                            include_once ('../function.php');
+                                                            $encrypted = urlencode(encrypt($row['work_order_number']));
+                                                            ?>
                                                             <td>
+                                                                <a href="request-details.php?wo=<?php echo $encrypted; ?>">
+                                                                    View Details
+                                                                </a>
+                                                            </td>
+                                                            <!-- <td>
                                                                 <button class="btn btn-success btn-sm approve" data-id="<?php echo htmlspecialchars($row['work_order_number']); ?>">Approve</button>
                                                                 <button class="btn btn-danger btn-sm decline" data-id="<?php echo htmlspecialchars($row['work_order_number']); ?>">Decline</button>
-                                                            </td>
+                                                            </td> -->
                                                         </tr>
                                                     <?php endwhile; ?>
                                                 <?php endif; ?>
@@ -198,21 +207,21 @@ $conn->close();
 
         <!-- Rejection Reason Modal -->
         <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Rejection Reason</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Rejection Reason</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="rejectReason" class="form-control" placeholder="Enter reason for rejection"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmReject">Reject</button>
+                </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <textarea id="rejectReason" class="form-control" placeholder="Enter reason for rejection"></textarea>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmReject">Reject</button>
-            </div>
-            </div>
-        </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
@@ -258,95 +267,6 @@ $conn->close();
             });
         </script>
 
-        <!-- SweetAlert CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            let rejectId = null;
-            let rejectBtn = null;
-
-            // APPROVE
-            $(document).on('click', '.approve', function () {
-                let $btn = $(this);
-                let id = $btn.data('id');
-
-                // Disable + spinner
-                $btn.prop('disabled', true)
-                    .html('<span class="spinner-border spinner-border-sm"></span> Approving');
-
-                $.post("update_status.php", { id: id, status: "Approved" })
-                    .done(function (response) {
-                        if (response.trim() === "success") {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Approved',
-                                text: 'Work order approved successfully',
-                                timer: 1500,
-                                showConfirmButton: false
-                            }).then(() => location.reload());
-                        } else {
-                            Swal.fire('Error', response, 'error');
-                            resetButton($btn, 'Approve');
-                        }
-                    })
-                    .fail(function () {
-                        Swal.fire('Error', 'Server error occurred', 'error');
-                        resetButton($btn, 'Approve');
-                    });
-            });
-
-            // DECLINE (open modal)
-            $(document).on('click', '.decline', function () {
-                rejectId = $(this).data('id');
-                rejectBtn = $(this);
-
-                $('#rejectReason').val('');
-                $('#rejectModal').modal('show');
-            });
-
-            // CONFIRM REJECT
-            $('#confirmReject').on('click', function () {
-                let reason = $('#rejectReason').val().trim();
-
-                if (reason === "") {
-                    Swal.fire('Required', 'Please enter a rejection reason', 'warning');
-                    return;
-                }
-
-                // Disable decline button + spinner
-                rejectBtn.prop('disabled', true)
-                    .html('<span class="spinner-border spinner-border-sm"></span> Rejecting');
-
-                $.post("update_status.php", {
-                    id: rejectId,
-                    status: "Rejected",
-                    reason: reason
-                })
-                .done(function (response) {
-                    if (response.trim() === "success") {
-                        $('#rejectModal').modal('hide');
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Rejected',
-                            text: 'Work order rejected successfully',
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(() => location.reload());
-                    } else {
-                        Swal.fire('Error', response, 'error');
-                        resetButton(rejectBtn, 'Decline');
-                    }
-                })
-                .fail(function () {
-                    Swal.fire('Error', 'Server error occurred', 'error');
-                    resetButton(rejectBtn, 'Decline');
-                });
-            });
-
-            // RESET BUTTON HELPER
-            function resetButton($btn, text) {
-                $btn.prop('disabled', false).text(text);
-            }
-        </script>
+        
     </body>
 </html>

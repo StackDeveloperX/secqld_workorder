@@ -133,6 +133,7 @@ $conn->close();
                                             JOIN admin a 
                                                 ON a.admin_id = rc.logged_by
                                             WHERE rc.assigned_to = $user_id
+                                            AND rc.status = 'Active'
                                             ORDER BY rc.contract_id DESC"; // latest first
                                     $result = $conn->query($sql);
                                     ?>

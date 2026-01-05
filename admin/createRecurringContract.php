@@ -28,18 +28,19 @@ try {
     $stmt = $conn->prepare("
         INSERT INTO recurring_contracts
         (site_id, service_type_id, start_date, end_date, frequency,
-         work_order_value, annual_value, assigned_to, logged_by, priority, description)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?)
+         work_order_value, annual_value, balance_amount, assigned_to, logged_by, priority, description)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?, ?)
     ");
 
     $stmt->bind_param(
-        "iisssddssss",
+        "iisssdddssss",
         $sitename_recurring,
         $service_type_recurring,
         $start_date,
         $end_date,
         $frequency,
         $work_order_amount,
+        $annual,
         $annual,
         $user_select_recurring,
         $logged_by,

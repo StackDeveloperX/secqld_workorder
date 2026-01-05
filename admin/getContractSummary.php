@@ -7,14 +7,14 @@ $sql = "
 SELECT 
     rc.annual_value,
     rc.work_order_value,
+    rc.balance_amount,
     s.site_name,
-    IFNULL(SUM(wo.value), 0) AS current_billing
+    IFNULL(SUM(wo.actual_value), 0) AS current_billing
 FROM recurring_contracts rc
 JOIN site_tbl s 
     ON s.id = rc.site_id
 LEFT JOIN recurring_work_orders wo 
     ON wo.contract_id = rc.contract_id
-    AND wo.status = 'Completed'
 WHERE rc.contract_id = $contract_id
 GROUP BY rc.contract_id
 ";
@@ -34,7 +34,7 @@ $r = $result->fetch_assoc();
 $annual  = (float)$r['annual_value'];
 $current = (float)$r['current_billing'];
 $weekly  = (float)$r['work_order_value'];
-$balance = $annual - $current;
+$balance = (float)$r['balance_amount'];
 
 echo json_encode([
     /* formatted values (tables) */

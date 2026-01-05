@@ -147,9 +147,18 @@ $conn->close();
                                                             <td><?php echo htmlspecialchars($row['annual_value']); ?></td>
                                                             <td><?php echo htmlspecialchars($row['status']); ?></td>
                                                             <td>
-                                                                <a href='recurring-contract-view.php?contract_id=<?php echo htmlspecialchars($row['contract_id']); ?>'>
-                                                                    View Work Orders
+                                                                <a class="btn btn-success btn-sm" href='recurring-contract-view.php?contract_id=<?php echo htmlspecialchars($row['contract_id']); ?>'>
+                                                                    View
                                                                 </a>
+                                                                <!-- Cancel button (ONLY if Active) -->
+                                                                <?php if ($row['status'] === 'Active'): ?>
+                                                                    <button 
+                                                                            id="cancelContractBtn"
+                                                                            class="btn btn-danger btn-sm"
+                                                                            data-contract-id="<?= $row['contract_id'] ?>">
+                                                                            Cancel
+                                                                        </button>
+                                                                <?php endif; ?>
                                                             </td>
                                                         </tr>
                                                     <?php endwhile; ?>
@@ -329,5 +338,56 @@ $conn->close();
                 });
             });
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.getElementById('cancelContractBtn')?.addEventListener('click', function () {
+
+                const contractId = this.dataset.contractId;
+
+                Swal.fire({
+                    title: 'Cancel Contract?',
+                    text: 'This action cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Yes, cancel it',
+                    cancelButtonText: 'No'
+                }).then((result) => {
+
+                    if (!result.isConfirmed) return;
+
+                    fetch('cancel-contract.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        body: 'contract_id=' + encodeURIComponent(contractId)
+                    })
+                    .then(res => res.text())
+                    .then(response => {
+
+                        if (response.trim() === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Cancelled',
+                                text: 'Contract cancelled successfully.'
+                            }).then(() => location.reload());
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response
+                            });
+                        }
+
+                    })
+                    .catch(() => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong. Please try again.'
+                        });
+                    });
+                });
+            });
+            </script>
     </body>
 </html>
