@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['client_id'])) {
     header("Location: index.php");
     exit;
 }
@@ -9,17 +9,17 @@ if (!isset($_SESSION['user_id'])) {
 include('includes/connection.php');
 
 // Get user details
-$user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT * FROM users WHERE user_id = ?");
-$stmt->bind_param("i", $user_id);
+$client_id = $_SESSION['client_id'];
+$stmt = $conn->prepare("SELECT * FROM clients WHERE client_id = ?");
+$stmt->bind_param("i", $client_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows === 1) {
     $user = $result->fetch_assoc();
-    $name = $user['name'];       // adjust field names as per your DB
-    $email = $user['email'];     // adjust accordingly
-    $job_title = $user['job_title'];     // adjust accordingly
+    $business_name = $user['business_name'];       // adjust field names as per your DB
+    $business_email  = $user['business_email'];     // adjust accordingly
+    $abn = $user['abn'];     // adjust accordingly
 } else {
     // Invalid user_id or deleted user
     session_destroy();
@@ -35,7 +35,7 @@ if ($result->num_rows === 1) {
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title><?php echo htmlspecialchars($name); ?> - Dashboard</title>
+        <title><?php echo htmlspecialchars($business_name); ?> - Dashboard</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link rel="stylesheet" href="assets/css/style.css">
@@ -68,8 +68,8 @@ if ($result->num_rows === 1) {
                         <div class="bottom-section">
                             <div class="user-info text-center">
                                 <img src="assets/images/user.png" alt="User" />
-                                <p class="name"><?php echo htmlspecialchars($name); ?></p>
-                                <p class="role"><?php echo htmlspecialchars($job_title); ?></p>
+                                <p class="name"><?php echo htmlspecialchars($business_name); ?></p>
+                                <p class="role"><?php echo htmlspecialchars($business_email); ?></p>
                             </div>
                         </div>
                     </div>
@@ -92,7 +92,7 @@ if ($result->num_rows === 1) {
                                         a.admin_contact,
                                         st.service_name,
                                         p.priority_name,
-                                        u.name,
+                                        u.business_name,
                                         s.site_name,
                                         rc.description,
                                         w.*
@@ -103,8 +103,8 @@ if ($result->num_rows === 1) {
                                         ON w.service_type_id = st.service_id
                                     LEFT JOIN priority_tbl p
                                         ON w.priority = p.priority_id
-                                    LEFT JOIN users u
-                                        ON w.assigned_to = u.user_id
+                                    LEFT JOIN clients u
+                                        ON w.assigned_to = u.client_id
                                     LEFT JOIN site_tbl s
                                         ON w.site_id = s.site_id
                                     LEFT JOIN recurring_contracts rc
@@ -668,7 +668,7 @@ if ($result->num_rows === 1) {
 
         $(document).ready(function(){
             // Initially hide
-            if($("#wo_status").val() === "Completed" || $("#wo_status").val() === "Await Invoice" || $("#wo_status").val() === "Await Approval" || $("#wo_status").val() === "Final Complete"){
+            if($("#wo_status").val() === "Completed" || $("#wo_status").val() === "Await Invoice" || $("#wo_status").val() === "Await Approval" || $("#wo_status").val() === "Final Complete" || $("#wo_status").val() === "Invoice Processed"){
                 $("#billing_details").show();
                 $("#hideafterchange").hide();
             } else {

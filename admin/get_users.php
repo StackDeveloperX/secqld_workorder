@@ -1,6 +1,6 @@
 <?php
 include("../includes/connection.php");
-$sql = "SELECT user_id, name FROM users ORDER BY name ASC";
+$sql = "SELECT client_id, business_name FROM clients ORDER BY business_name ASC";
 $result = $conn->query($sql);
 
 $sites = [];

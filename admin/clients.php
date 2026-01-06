@@ -38,7 +38,7 @@ $conn->close();
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title><?php echo htmlspecialchars($name); ?> - Sites</title>
+        <title><?php echo htmlspecialchars($name); ?> - Clients</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link rel="stylesheet" href="../assets/css/style.css">
@@ -62,8 +62,8 @@ $conn->close();
                             <a href="wo_status.php"><p class="menu"><span><i class="fa-solid fa-circle-user"></i> Work Order Status</span></p></a>
                             <a href="recurring_wo_status.php"><p class="menu"><span><i class="fa-solid fa-circle-user"></i> Recurring Status</span></p></a>
                             <a href="service_types.php"><p class="menu"><span><i class="fa-solid fa-gears"></i> Service Types</span></p></a>
-                            <a href="sites.php"><p class="active-menu"><span><i class="fa-regular fa-building"></i> Sites</span></p></a>
-                            <a href="clients.php"><p class="menu"><span><i class="fa-solid fa-users"></i> Clients</span></p></a>
+                            <a href="sites.php"><p class="menu"><span><i class="fa-regular fa-building"></i> Sites</span></p></a>
+                            <a href="clients.php"><p class="active-menu"><span><i class="fa-solid fa-users"></i> Clients</span></p></a>
                             <a href="logout.php"><p class="menu"><span><i class="fa-solid fa-right-from-bracket"></i> Log Out</span></p></a>
                         </div>
 
@@ -99,40 +99,25 @@ $conn->close();
                             <div class="col-sm-12">
                                 <div class="card shadow outer-card">
                                     <div class="card-body">
-                                        <h2 class="title greentitle text-center mb-3">Sites</h2>
-                                        <?php
-                                        include('includes/connection.php');
-                                        $serviceResult = $conn->query("SELECT service_id, service_name FROM service_type_tbl ORDER BY service_name ASC");
-                                        ?>
+                                        <h2 class="title greentitle text-center mb-3">Clients</h2>
                                         <div class="row">
+                                            
                                             <div class="col-sm-3">
                                                 <div class="mb-3">
-                                                    <label class="form-label fw-bold">Filter by Service Type:</label>
-                                                    <select id="filterServiceType" class="form-select" style="width: 300px;">
-                                                        <option value="">Show All</option>
-                                                        <?php while ($s = $serviceResult->fetch_assoc()): ?>
-                                                            <option value="<?= htmlspecialchars($s['service_name']); ?>">
-                                                                <?= htmlspecialchars($s['service_name']); ?>
-                                                            </option>
-                                                        <?php endwhile; ?>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <div class="mb-3">
-                                                    <label class="form-label fw-bold">Add New Site</label><br>
-                                                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addSiteModal"><i class="fa-solid fa-plus"></i> Add New Site</button>
+                                                    <label class="form-label fw-bold">Add New Client</label><br>
+                                                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addSiteModal"><i class="fa-solid fa-plus"></i> Add New Client</button>
                                                 </div>
                                             </div>
                                         </div>
                                         <table id="example" class="table table-striped table-sm" style="width:100%">
                                             <thead>
                                                 <tr>
-                                                    <th>Site Id</th>
-                                                    <th>Company</th>
-                                                    <th>Site Name</th>
-                                                    <th>Service Type</th>
-                                                    <th>Site Status</th>
+                                                    <th>Client Id</th>
+                                                    <th>Business Name</th>
+                                                    <th>ABN</th>
+                                                    <th>Email Id</th>
+                                                    <th>Phone</th>
+                                                    <th>Status</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -141,48 +126,32 @@ $conn->close();
                                             include('includes/connection.php');
 
                                             // Fetch employee names
-                                            $sql = "SELECT 
-                                                s.site_id,
-                                                s.company,
-                                                s.site_name,
-                                                st.service_name AS service_type_name,
-                                                s.site_status
-                                                FROM site_tbl s
-                                                LEFT JOIN service_type_tbl st ON s.service_type = st.service_id
-                                                ORDER BY s.site_id "; // latest first
+                                            $sql = "SELECT * FROM clients"; // latest first
                                             $result = $conn->query($sql);
                                             ?>
                                             <tbody>
                                                 <?php if ($result->num_rows > 0): ?>
                                                     <?php while ($row = $result->fetch_assoc()): ?>
                                                         <tr>
-                                                            <td><?php echo htmlspecialchars($row['site_id']); ?></td>
-                                                            <td><?php echo htmlspecialchars($row['company']); ?></td>
-                                                            <td><?php echo htmlspecialchars($row['site_name']); ?></td>
-                                                            <td><?php echo htmlspecialchars($row['service_type_name']); ?></td>
-                                                            <td class="status-text"><?php echo htmlspecialchars($row['site_status']); ?></td>
-                                                            
+                                                            <td><?php echo htmlspecialchars($row['client_id']); ?></td>
+                                                            <td><?php echo htmlspecialchars($row['business_name']); ?></td>
+                                                            <td><?php echo htmlspecialchars($row['abn']); ?></td>
+                                                            <td><?php echo htmlspecialchars($row['business_email']); ?></td>
+                                                            <td><?php echo htmlspecialchars($row['phone']); ?></td>
+                                                            <td class="status-text"><?php echo htmlspecialchars($row['status']); ?></td>
                                                             <td>
                                                                 <label class="switch">
                                                                     <input type="checkbox" class="status-toggle"
-                                                                        data-id="<?= $row['site_id']; ?>"
-                                                                        <?= ($row['site_status'] === 'Active') ? 'checked' : ''; ?>>
+                                                                        data-id="<?= $row['client_id']; ?>"
+                                                                        <?= ($row['status'] === 'Active') ? 'checked' : ''; ?>>
                                                                     <span class="slider round"></span>
                                                                 </label>
 
-                                                                <!-- Edit Button -->
-                                                                <button class="btn btn-warning btn-sm editSite"
-                                                                    data-id="<?= $row['site_id']; ?>"
-                                                                    data-company="<?= htmlspecialchars($row['company']); ?>"
-                                                                    data-site="<?= htmlspecialchars($row['site_name']); ?>"
-                                                                    data-service="<?= htmlspecialchars($row['service_type_name']); ?>"
-                                                                    data-status="<?= htmlspecialchars($row['site_status']); ?>">
-                                                                    <i class="fa-solid fa-pencil"></i>
-                                                                </button>
+                                                                
 
                                                                 <!-- Delete Button -->
                                                                 <button class="btn btn-danger btn-sm deleteSite"
-                                                                    data-id="<?= $row['site_id']; ?>">
+                                                                    data-id="<?= $row['client_id']; ?>">
                                                                     <i class="fa-solid fa-trash-can"></i>
                                                                 </button>
                                                             </td>
@@ -192,11 +161,12 @@ $conn->close();
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <th>Site Id</th>
-                                                    <th>Company</th>
-                                                    <th>Site Name</th>
-                                                    <th>Service Type</th>
-                                                    <th>Site Status</th>
+                                                    <th>Client Id</th>
+                                                    <th>Business Name</th>
+                                                    <th>ABN</th>
+                                                    <th>Email Id</th>
+                                                    <th>Phone</th>
+                                                    <th>Status</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </tfoot>
@@ -227,53 +197,44 @@ $conn->close();
                 <div class="modal-content">
 
                     <div class="modal-header">
-                        <h5 class="modal-title">Add New Site</h5>
+                        <h5 class="modal-title">Add New Client</h5>
                         <button class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <div class="modal-body">
-                        <form id="addSiteForm">
+                        <form id="addClientForm">
 
                             <div class="mb-3">
-                                <label>Company</label>
-                                <input type="text" name="company" class="form-control" required>
+                                <label>Business Name</label>
+                                <input type="text" name="business" class="form-control" required>
                             </div>
 
                             <div class="mb-3">
-                                <label>Site Name</label>
-                                <input type="text" name="site_name" class="form-control" required>
+                                <label>ABN Number</label>
+                                <input type="text" name="abn" class="form-control" required>
                             </div>
 
                             <div class="mb-3">
-                                <label>Service Type</label>
-                                <select name="service_type" class="form-select" required>
-                                    <option value="">Select Service Type</option>
-                                    <?php
-                                        $services = $conn->query("SELECT * FROM service_type_tbl ORDER BY service_name ASC");
-                                        while ($s = $services->fetch_assoc()):
-                                    ?>
-                                        <option value="<?= $s['service_id']; ?>"><?= htmlspecialchars($s['service_name']); ?></option>
-                                    <?php endwhile; ?>
-                                </select>
+                                <label>Email Address</label>
+                                <input type="email" name="email" class="form-control" required>
                             </div>
 
                             <div class="mb-3">
-                                <label>Status</label>
-                                <select name="site_status" class="form-select" required>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
+                                <label>Phone</label>
+                                <input type="text" name="phone" class="form-control" required>
                             </div>
 
+                            <div class="mb-3">
+                                <label>Landline</label>
+                                <input type="text" name="landline" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Client</button>
                         </form>
                     </div>
 
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button class="btn btn-success" id="saveSiteBtn">
-                            <span class="btn-text">Save</span>
-                            <span class="spinner-border spinner-border-sm d-none" id="saveLoader"></span>
-                        </button>
+                        
                     </div>
 
                 </div>
@@ -359,7 +320,7 @@ $conn->close();
                 let statusCell = checkbox.closest("tr").find(".status-text");
 
                 $.ajax({
-                    url: "toggle_site_status.php",
+                    url: "toggle_client_status.php",
                     type: "POST",
                     data: { id: siteId, status: newStatus },
                     success: function (response) {
@@ -389,38 +350,6 @@ $conn->close();
 
             });
 
-            $(document).on("click", ".editSite", function () {
-
-                $("#edit_site_id").val($(this).data("id"));
-                $("#edit_company").val($(this).data("company"));
-                $("#edit_site_name").val($(this).data("site"));
-                $("#edit_service_type").val($(this).data("service"));
-
-                $("#editSiteModal").modal("show");
-            });
-
-            $("#updateSiteBtn").click(function () {
-
-                $.ajax({
-                    url: "update_site.php",
-                    type: "POST",
-                    data: $("#editSiteForm").serialize(),
-                    success: function (response) {
-
-                        if (response === "success") {
-                            Swal.fire({
-                                title: "Updated!",
-                                text: "Site updated successfully.",
-                                icon: "success"
-                            }).then(() => location.reload());
-                        } else {
-                            Swal.fire("Error!", "Unable to update site.", "error");
-                        }
-                    }
-                });
-
-            });
-
             $(document).on("click", ".deleteSite", function () {
 
                 let siteId = $(this).data("id");
@@ -436,7 +365,7 @@ $conn->close();
                     if (result.isConfirmed) {
 
                         $.ajax({
-                            url: "delete_site.php",
+                            url: "delete_client.php",
                             type: "POST",
                             data: { id: siteId },
                             success: function (response) {
@@ -458,66 +387,137 @@ $conn->close();
 
             });
 
-            $("#saveSiteBtn").click(function () {
+            // $("#saveSiteBtn").click(function () {
 
-                let btn = $(this);
-                let loader = $("#saveLoader");
-                let btnText = btn.find(".btn-text");
+            //     let btn = $(this);
+            //     let loader = $("#saveLoader");
+            //     let btnText = btn.find(".btn-text");
 
-                // Disable button + show loader
-                btn.prop("disabled", true);
-                btnText.addClass("d-none");
-                loader.removeClass("d-none");
+            //     // Disable button + show loader
+            //     btn.prop("disabled", true);
+            //     btnText.addClass("d-none");
+            //     loader.removeClass("d-none");
 
-                $.ajax({
-                    url: "add_site.php",
-                    type: "POST",
-                    data: $("#addSiteForm").serialize(),
-                    dataType: "json",
+            //     $.ajax({
+            //         url: "add_site.php",
+            //         type: "POST",
+            //         data: $("#addSiteForm").serialize(),
+            //         dataType: "json",
 
-                    success: function (response) {
+            //         success: function (response) {
 
-                        // Restore button state
-                        btn.prop("disabled", false);
-                        btnText.removeClass("d-none");
-                        loader.addClass("d-none");
+            //             // Restore button state
+            //             btn.prop("disabled", false);
+            //             btnText.removeClass("d-none");
+            //             loader.addClass("d-none");
 
-                        // Duplicate validation
-                        if (response.status === "duplicate") {
+            //             // Duplicate validation
+            //             if (response.status === "duplicate") {
+            //                 Swal.fire({
+            //                     title: "Duplicate!",
+            //                     text: "A site with the same company and site name already exists.",
+            //                     icon: "warning"
+            //                 });
+            //                 return;
+            //             }
+
+            //             // Success
+            //             if (response.status === "success") {
+            //                 Swal.fire({
+            //                     title: "Site Added!",
+            //                     text: "New site has been added successfully.",
+            //                     icon: "success"
+            //                 }).then(() => location.reload());
+            //                 return;
+            //             }
+
+            //             // General error fallback
+            //             Swal.fire("Error!", "Unable to add site. Try again.", "error");
+            //         },
+
+            //         error: function () {
+
+            //             // Restore button state on failure
+            //             btn.prop("disabled", false);
+            //             btnText.removeClass("d-none");
+            //             loader.addClass("d-none");
+
+            //             Swal.fire("Server Error!", "Unable to connect to server.", "error");
+            //         }
+            //     });
+
+            // });
+        </script>
+
+        <script>
+            document.getElementById('addClientForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const form = this;
+                const submitBtn = form.querySelector('button[type="submit"]');
+
+                Swal.fire({
+                    title: 'Add Client?',
+                    text: 'A welcome email with a temporary password will be sent.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, add client',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+
+                    if (!result.isConfirmed) return;
+
+                    // 🔒 Disable button & change text
+                    submitBtn.disabled = true;
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = 'Adding...';
+
+                    const formData = new FormData(form);
+
+                    fetch('save-client.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(response => {
+
+                        if (response.status === 'success') {
                             Swal.fire({
-                                title: "Duplicate!",
-                                text: "A site with the same company and site name already exists.",
-                                icon: "warning"
+                                icon: 'success',
+                                title: 'Client Added',
+                                text: response.message
+                            }).then(() => {
+                                // 🔄 Reload page after success
+                                location.reload();
                             });
-                            return;
-                        }
 
-                        // Success
-                        if (response.status === "success") {
+                        } else {
                             Swal.fire({
-                                title: "Site Added!",
-                                text: "New site has been added successfully.",
-                                icon: "success"
-                            }).then(() => location.reload());
-                            return;
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message
+                            });
+
+                            // 🔓 Re-enable button on error
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalText;
                         }
 
-                        // General error fallback
-                        Swal.fire("Error!", "Unable to add site. Try again.", "error");
-                    },
+                    })
+                    .catch(() => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong. Please try again.'
+                        });
 
-                    error: function () {
-
-                        // Restore button state on failure
-                        btn.prop("disabled", false);
-                        btnText.removeClass("d-none");
-                        loader.addClass("d-none");
-
-                        Swal.fire("Server Error!", "Unable to connect to server.", "error");
-                    }
+                        // 🔓 Re-enable button on failure
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    });
                 });
-
             });
         </script>
+
     </body>
 </html>

@@ -6,7 +6,7 @@ $(document).ready(function(){
         success: function(data) {
             let options = '<option value="">-- Select User --</option>';
             data.forEach(function(types) {
-                options += `<option value="${types.user_id}">${types.name}</option>`;
+                options += `<option value="${types.client_id}">${types.business_name}</option>`;
             });
             $('#user_select').html(options);
         },
@@ -25,7 +25,7 @@ $(document).ready(function(){
         success: function(data) {
             let options = '<option value="">-- Select User --</option>';
             data.forEach(function(types) {
-                options += `<option value="${types.user_id}">${types.name}</option>`;
+                options += `<option value="${types.client_id}">${types.business_name}</option>`;
             });
             $('#user_select_recurring').html(options);
         },

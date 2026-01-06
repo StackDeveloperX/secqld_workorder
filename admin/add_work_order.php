@@ -60,17 +60,18 @@ $conn->close();
                             <a href="recurring_wo_status.php"><p class="menu"><span><i class="fa-solid fa-circle-user"></i> Recurring Status</span></p></a>
                             <a href="service_types.php"><p class="menu"><span><i class="fa-solid fa-gears"></i> Service Types</span></p></a>
                             <a href="sites.php"><p class="menu"><span><i class="fa-regular fa-building"></i> Sites</span></p></a>
+                            <a href="clients.php"><p class="menu"><span><i class="fa-solid fa-users"></i> Clients</span></p></a>
                             <a href="logout.php"><p class="menu"><span><i class="fa-solid fa-right-from-bracket"></i> Log Out</span></p></a>
                         </div>
 
-                        <div class="bottom-section">
+                        <!-- <div class="bottom-section">
                             <div class="user-info text-center">
                                 <img src="../assets/images/user.png" alt="User" />
                                 <p class="name"><?php echo htmlspecialchars($name); ?></p>
                                 <p class="role"><?php echo htmlspecialchars($role); ?></p>
                             </div>
                             
-                        </div>
+                        </div> -->
                     </div>
                     <div class="col-sm-10 main-screen">
                         <div class="row">

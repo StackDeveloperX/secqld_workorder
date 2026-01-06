@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['client_id'])) {
     header("Location: index.php");
     exit;
 }
@@ -9,17 +9,17 @@ if (!isset($_SESSION['user_id'])) {
 include('includes/connection.php');
 
 // Get user details
-$user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT * FROM users WHERE user_id = ?");
-$stmt->bind_param("i", $user_id);
+$client_id = $_SESSION['client_id'];
+$stmt = $conn->prepare("SELECT * FROM clients WHERE client_id = ?");
+$stmt->bind_param("i", $client_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows === 1) {
     $user = $result->fetch_assoc();
-    $name = $user['name'];       // adjust field names as per your DB
-    $email = $user['email'];     // adjust accordingly
-    $job_title = $user['job_title'];     // adjust accordingly
+    $business_name = $user['business_name'];       // adjust field names as per your DB
+    $business_email  = $user['business_email'];     // adjust accordingly
+    $abn = $user['abn'];     // adjust accordingly
 } else {
     // Invalid user_id or deleted user
     session_destroy();
@@ -37,7 +37,7 @@ $conn->close();
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title><?php echo htmlspecialchars($name); ?> - Dashboard</title>
+        <title><?php echo htmlspecialchars($business_name); ?> - Dashboard</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link rel="stylesheet" href="assets/css/style.css">
@@ -85,8 +85,8 @@ $conn->close();
                                         <img src="assets/images/user.png" width="60px" alt="">
                                     </div>
                                     <div class="col-sm-9 userinfor">
-                                        <p class="user-title"><?php echo htmlspecialchars($name); ?></p>
-                                        <p class="user-role"><?php echo htmlspecialchars($job_title); ?></p>
+                                        <p class="user-title"><?php echo htmlspecialchars($business_name); ?></p>
+                                        <p class="user-role"><?php echo htmlspecialchars($business_email); ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -189,7 +189,7 @@ $conn->close();
                                     <?php
                                     // Connect to the database
                                     include('includes/connection.php');
-                                    $user_id = $_SESSION['user_id'];
+                                    $user_id = $_SESSION['client_id'];
                                     // Fetch employee names
                                     $sql = "SELECT 
                                             w.work_order_date,
@@ -198,14 +198,14 @@ $conn->close();
                                             w.site_name,
                                             s.service_name AS type,
                                             p.priority_name AS priority,
-                                            u.name AS assigned_to,
+                                            u.business_name AS assigned_to,
                                             a.admin_name AS logged_by_name,
                                             w.value,
                                             w.status
                                         FROM work_order w
                                         LEFT JOIN service_type_tbl s ON w.type = s.service_id
                                         LEFT JOIN priority_tbl p ON w.priority = p.priority_id
-                                        LEFT JOIN users u ON w.assigned_to = u.user_id
+                                        LEFT JOIN clients u ON w.assigned_to = u.client_id
                                         LEFT JOIN admin a ON w.logged_by = a.admin_id
                                         WHERE w.assigned_to = $user_id
                                         ORDER BY w.work_order_date DESC, w.work_order_number DESC"; // latest first

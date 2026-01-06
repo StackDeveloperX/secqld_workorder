@@ -72,14 +72,19 @@ if (isset($_SESSION['user_id'])) {
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             $(document).ready(function () {
+
                 const toastEl = document.getElementById('loginToast');
                 const toast = new bootstrap.Toast(toastEl);
 
                 function showToast(message, type = 'danger') {
                     $('#toastMessage').text(message);
                     $('#loginToast')
-                        .removeClass('bg-success bg-danger')
-                        .addClass(type === 'success' ? 'bg-success' : 'bg-danger');
+                        .removeClass('bg-success bg-danger bg-warning')
+                        .addClass(
+                            type === 'success' ? 'bg-success' :
+                            type === 'warning' ? 'bg-warning' :
+                            'bg-danger'
+                        );
                     toast.show();
                 }
 
@@ -88,36 +93,63 @@ if (isset($_SESSION['user_id'])) {
 
                     let email = $('#email').val().trim();
                     let password = $('#password').val().trim();
+                    let submitBtn = $('#login-form button[type="submit"]');
 
                     if (email === '' || password === '') {
                         showToast('Both fields are required.');
                         return;
                     }
 
-                    let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+                    let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,}$/i;
                     if (!emailPattern.test(email)) {
                         showToast('Please enter a valid email address.');
                         return;
                     }
+
+                    // 🔒 Disable button & change text
+                    submitBtn.prop('disabled', true).text('Signing in...');
 
                     $.ajax({
                         url: 'includes/login.php',
                         type: 'POST',
                         data: { email: email, password: password },
                         success: function (response) {
+
+                            response = response.trim();
+
                             if (response === 'success') {
                                 showToast('Login successful!', 'success');
                                 setTimeout(() => {
-                                    window.location.href = 'dashboard.php'; // Redirect
-                                }, 1500);
+                                    window.location.href = 'dashboard.php';
+                                }, 1200);
+
+                            } else if (response === 'change_password') {
+                                showToast('Please change your password to continue.', 'warning');
+                                setTimeout(() => {
+                                    window.location.href = 'change-password.php';
+                                }, 1200);
+
+                            } else if (response === 'inactive') {
+                                showToast('Your account is inactive. Contact support.', 'warning');
+
                             } else if (response === 'invalid') {
                                 showToast('Invalid email or password.');
+
+                            } else if (response === 'empty') {
+                                showToast('Email and password are required.');
+
                             } else {
                                 showToast('Unexpected error. Try again.');
+                            }
+
+                            // 🔓 Re-enable button on non-success
+                            if (response !== 'success' && response !== 'change_password') {
+                                submitBtn.prop('disabled', false).text('Sign In');
                             }
                         },
                         error: function () {
                             showToast('Server error occurred.');
+                            submitBtn.prop('disabled', false).text('Sign In');
                         }
                     });
                 });
